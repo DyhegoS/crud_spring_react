@@ -3,6 +3,7 @@ package br.com.api.person.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -70,6 +71,21 @@ public class PersonController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> displayImage(@PathVariable Long id) {
+        try{
+            byte[] img = service.getImg(id);
+            String extension = service.getExtension(id);
+
+            return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(extension))
+            .body(img);
+        }catch(Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
     
     
 }
