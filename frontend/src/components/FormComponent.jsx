@@ -17,71 +17,119 @@ function FormComponent({
         <div className="overlay">
           {
             <div className="modal">
-              <form>
-                <input
-                  type="number"
-                  defaultValue={person.id}
-                  onChange={updatePerson}
-                  name="id"
-                  placeholder="ID"
-                  className="form-control"
-                  readOnly
-                />
-                <input
-                  type="text"
-                  defaultValue={person.name}
-                  onChange={updatePerson}
+              <Box
+                component="form"
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  maxWidth: 700,
+                  margin: "0 auto",
+                }}
+              >
+                {person.id && (
+                  <CardMedia
+                    component="img"
+                    src={`http://localhost:8080/persons/image/${person.id}`}
+                    alt="Imagem da pessoa"
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      objectFit: "cover",
+                      borderRadius: 2,
+                      margin: "0 auto",
+                    }}
+                  />
+                )}
+
+                {person.img && typeof person.img !== "string" && (
+                  <CardMedia
+                    component={"img"}
+                    src={URL.createObjectURL(person.img)}
+                    alt="Preview da pessoa"
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      objectFit: "cover",
+                      borderRadius: 2,
+                      margin: "0 auto",
+                    }}
+                  />
+                )}
+
+                <TextField
+                  label="Nome"
                   name="name"
-                  placeholder="Digite seu Nome"
-                  className="form-control"
-                />
-                <input
-                  type="text"
-                  defaultValue={person.city}
+                  value={person.name}
                   onChange={updatePerson}
+                  variant="outlined"
+                />
+                <TextField
+                  label="Cidade"
                   name="city"
-                  placeholder="Digite sua Cidade"
-                  className="form-control"
+                  value={person.city}
+                  onChange={updatePerson}
+                  variant="outlined"
                 />
 
-                {button ? (
-                  <div>
+                {button && (
+                  <Button
+                    variant="outlined"
+                    component="label"
+                    sx={{ height: 56 }}
+                  >
+                    Selecionar Imagem
                     <input
-                      type="button"
-                      onClick={insert}
-                      value="Cadastrar"
-                      className="btn btn-primary"
+                      type="file"
+                      hidden
+                      onChange={updatePerson}
+                      name="img"
+                      accept="image/png, imag/jpeg"
                     />
-                    <input
-                      type="button"
-                      onClick={closeForm}
-                      value="Cancelar"
-                      className="btn btn-primary"
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <input
-                      type="button"
-                      onClick={update}
-                      value="Alterar"
-                      className="btn btn-warning"
-                    />
-                    <input
-                      type="button"
-                      value="Remover"
-                      onClick={deletePerson}
-                      className="btn btn-danger"
-                    />
-                    <input
-                      type="button"
-                      onClick={closeForm}
-                      value="Cancelar"
-                      className="btn btn-primary"
-                    />
-                  </>
+                  </Button>
                 )}
-              </form>
+
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifycontent="center"
+                  marginbottom={5}
+                >
+                  {button ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={insert}
+                    >
+                      Cadastrar
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={update}
+                      >
+                        Alterar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={deletePerson}
+                      >
+                        Remover
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={closeForm}
+                      >
+                        Cancelar
+                      </Button>
+                    </>
+                  )}
+                </Stack>
+              </Box>
             </div>
           }
         </div>
