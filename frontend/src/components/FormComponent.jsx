@@ -96,13 +96,22 @@ function FormComponent({
                   marginbottom={5}
                 >
                   {button ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={insert}
-                    >
-                      Cadastrar
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={insert}
+                      >
+                        Cadastrar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={closeForm}
+                      >
+                        Cancelar
+                      </Button>
+                    </>
                   ) : (
                     <>
                       <Button
