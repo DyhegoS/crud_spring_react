@@ -1,7 +1,7 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import TableComponent from "./components/TableComponent";
 import FormComponent from "./components/FormComponent";
 import { useEffect, useState } from "react";
+import { update, insert, findAll, remove } from "./services/PersonService";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -10,51 +10,44 @@ function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8080/persons")
-      .then((res) => res.json())
-      .then((data) => setPersons(data));
+    const fetchPersons = async () => {
+      const data = await findAll();
+      setPersons(data);
+    };
+    fetchPersons();
   }, []);
 
-  const updatePerson = (e) => {
-    const { name, value } = e.target;
-    setPerson({ ...person, [name]: value });
+  const getPerson = (e) => {
+    const { name, value, files, type } = e.target;
+
+    if (type === "file") {
+      setPerson({
+        ...person,
+        [name]: files[0],
+        preview: URL.createObjectURL(files[0]),
+      });
+    } else {
+      setPerson({ ...person, [name]: value });
+    }
   };
 
-  const insert = () => {
+  const insertPerson = async () => {
     setButtonInsert(true);
-    fetch("http://localhost:8080/persons", {
-      method: "POST",
-      headers: { "Content-Type": "Application/json" },
-      body: JSON.stringify(person),
-    })
-      .then((res) => res.json())
-      .then((p) => {
-        setPersons((vector) => [...vector, p]);
-        setPerson({ id: null, name: "", city: "" });
-      });
+    const newPerson = await insert(person);
+    setPersons([...persons, newPerson]);
     closeForm();
   };
 
-  const update = () => {
-    fetch("http://localhost:8080/persons/" + person.id, {
-      method: "PUT",
-      headers: { "Content-Type": "Application/json" },
-      body: JSON.stringify(person),
-    })
-      .then((res) => res.json())
-      .then((p) => {
-        setPersons(persons.map((obj) => (obj.id === p.id ? p : obj)));
-        closeForm();
-      });
+  const updatePerson = async () => {
+    const updated = await update(person.id, person);
+    setPersons(persons.map((p) => (p.id === updated.id ? updated : p)));
+    closeForm();
   };
 
-  const deletePerson = () => {
-    fetch("http://localhost:8080/persons/" + person.id, {
-      method: "DELETE",
-    }).then(() => {
-      setPersons(persons.filter((obj) => obj.id !== person.id));
-      closeForm();
-    });
+  const deletePerson = async () => {
+    await remove(person.id);
+    setPersons(persons.filter((obj) => obj.id !== person.id));
+    closeForm();
   };
 
   const selectPerson = (index) => {
@@ -76,10 +69,10 @@ function App() {
     <>
       <FormComponent
         button={buttonInsert}
-        updatePerson={updatePerson}
-        insert={insert}
+        updatePerson={getPerson}
+        insert={insertPerson}
         person={person}
-        update={update}
+        update={updatePerson}
         deletePerson={deletePerson}
         showModal={showModal}
         closeForm={closeForm}

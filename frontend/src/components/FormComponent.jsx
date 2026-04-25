@@ -1,4 +1,4 @@
-import "./FormComponent.css";
+import { Box, TextField, Button, Stack, CardMedia } from "@mui/material";
 import "./Modal.css";
 
 function FormComponent({
